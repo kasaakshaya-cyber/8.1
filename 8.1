@@ -1,0 +1,84 @@
+
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class TipCalculator extends Application {
+
+    @Override
+    public void start(Stage stage) {
+
+        Label title = new Label("Tip Calculator");
+        Label billLabel = new Label("Bill Amount (₹):");
+        TextField billField = new TextField();
+
+        Label tipLabel = new Label("Tip Percentage:");
+        ComboBox<Integer> tipBox = new ComboBox<>();
+        tipBox.getItems().addAll(5, 10, 15, 20, 25);
+        tipBox.setValue(10);
+
+        Button calculateButton = new Button("Calculate Tip");
+        Label tipResult = new Label("Tip: ₹0.00");
+        Label totalResult = new Label("Total: ₹0.00");
+
+        calculateButton.setOnAction(e -> {
+            try {
+                double bill = Double.parseDouble(
+                    billField.getText()
+                );
+                int percentage = tipBox.getValue();
+
+                if (bill < 0) {
+                    tipResult.setText("Enter a valid bill amount.");
+                    totalResult.setText("");
+                    return;
+                }
+
+                double tip = bill * percentage / 100.0;
+                double total = bill + tip;
+
+                tipResult.setText(
+                    String.format("Tip: ₹%.2f", tip)
+                );
+                totalResult.setText(
+                    String.format("Total: ₹%.2f", total)
+                );
+
+            } catch (NumberFormatException ex) {
+                tipResult.setText("Please enter a valid amount.");
+                totalResult.setText("");
+            }
+        });
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(12);
+        grid.setAlignment(Pos.CENTER);
+
+        grid.add(billLabel, 0, 0);
+        grid.add(billField, 1, 0);
+        grid.add(tipLabel, 0, 1);
+        grid.add(tipBox, 1, 1);
+        grid.add(calculateButton, 1, 2);
+
+        VBox root = new VBox(15, title, grid,
+                             tipResult, totalResult);
+        root.setAlignment(Pos.CENTER);
+        root.setPadding(new Insets(20));
+
+        Scene scene = new Scene(root, 380, 300);
+
+        stage.setTitle("Tip Calculator");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
